@@ -4,6 +4,7 @@ package main
 
 // import the packages
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -51,16 +52,43 @@ func add_todo(context *gin.Context) {
 	context.IndentedJSON(http.StatusCreated, newTodo)
 }
 
+// This function receives the id and return the id or an error
+func get_todo_by_id(id string) (*todo, error) {
+	for i,t := range todos{
+		if t.Id == id {
+			return &todos[i], nil
+		}
+	}
+
+	return nil, errors.New("todo not found")
+}
+
+func get_single_todo(context *gin.Context) {
+	id := context.Param("id")
+	todo, err := get_todo_by_id(id)
+	
+	// if error occurs
+	if err!=nil {
+		context.IndentedJSON(http.StatusNotFound, gin.H{"message":"todo not found"})
+	} else {
+		context.IndentedJSON(http.StatusOK, todo)
+	}
+}
+
 func main() {
 	// create a server
 	router := gin.Default()
 
 	// create an endpoint
-	router.GET("/todos", get_todos)	
+	router.GET("/todos", get_todos)
+	router.GET("/todos/:id", get_single_todo)
 	router.POST("/todos", add_todo)
 	router.Run("localhost:9090")
 }
 
 // To run : use http://localhost:9090 on your browser. 
-// Get method : You can see output as https://github.com/priyanka25081999/go_practice/blob/main/output/get_method.JPG
+// GET method : You can see output as https://github.com/priyanka25081999/go_practice/blob/main/output/get_method.JPG
 // POST method : Send request as https://github.com/priyanka25081999/go_practice/blob/main/output/post%20method.JPG
+// GET method by id [Success] : https://github.com/priyanka25081999/go_practice/blob/main/output/get_by_id_success.JPG
+// GET method by id [Error] : https://github.com/priyanka25081999/go_practice/blob/main/output/get_by_id_error.JPG
+
