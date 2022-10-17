@@ -1,4 +1,4 @@
-// REST API : GET, POST
+// REST API : GET, POST, PATCH (UPDATE)
 
 package main
 
@@ -75,6 +75,21 @@ func get_single_todo(context *gin.Context) {
 	}
 }
 
+func update_todo(context *gin.Context) {
+	id := context.Param("id")
+	todo, err := get_todo_by_id(id)
+	
+	// if error occurs
+	if err!=nil {
+		context.IndentedJSON(http.StatusNotFound, gin.H{"message":"todo not found"})
+	} else {
+		// update the completed value
+		todo.Completed = !todo.Completed
+		context.IndentedJSON(http.StatusOK, todo)
+	}
+
+}
+
 func main() {
 	// create a server
 	router := gin.Default()
@@ -83,6 +98,7 @@ func main() {
 	router.GET("/todos", get_todos)
 	router.GET("/todos/:id", get_single_todo)
 	router.POST("/todos", add_todo)
+	router.PATCH("/todos/:id", update_todo)
 	router.Run("localhost:9090")
 }
 
@@ -91,4 +107,6 @@ func main() {
 // POST method : Send request as https://github.com/priyanka25081999/go_practice/blob/main/output/post%20method.JPG
 // GET method by id [Success] : https://github.com/priyanka25081999/go_practice/blob/main/output/get_by_id_success.JPG
 // GET method by id [Error] : https://github.com/priyanka25081999/go_practice/blob/main/output/get_by_id_error.JPG
+// PATCH method request : https://github.com/priyanka25081999/go_practice/blob/main/output/patch_method_request.JPG
+// PATCH method response : https://github.com/priyanka25081999/go_practice/blob/main/output/patch_method_response.JPG
 
