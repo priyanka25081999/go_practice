@@ -1,4 +1,4 @@
-// REST API : GET, POST, PATCH (UPDATE)
+// REST API : GET, POST, PATCH (UPDATE), DELETE
 
 package main
 
@@ -6,7 +6,6 @@ package main
 import (
 	"errors"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -90,6 +89,16 @@ func update_todo(context *gin.Context) {
 
 }
 
+func delete_todo(context *gin.Context) {
+	id := context.Param("id")
+	for i, todo := range todos {
+		if todo.Id == id {
+			todos = append(todos[:i], todos[i+1:]...)
+			context.IndentedJSON(http.StatusOK, todos)
+		}
+	}
+}
+
 func main() {
 	// create a server
 	router := gin.Default()
@@ -99,6 +108,7 @@ func main() {
 	router.GET("/todos/:id", get_single_todo)
 	router.POST("/todos", add_todo)
 	router.PATCH("/todos/:id", update_todo)
+	router.DELETE("/todos/:id", delete_todo)
 	router.Run("localhost:9090")
 }
 
@@ -109,4 +119,4 @@ func main() {
 // GET method by id [Error] : https://github.com/priyanka25081999/go_practice/blob/main/output/get_by_id_error.JPG
 // PATCH method request : https://github.com/priyanka25081999/go_practice/blob/main/output/patch_method_request.JPG
 // PATCH method response : https://github.com/priyanka25081999/go_practice/blob/main/output/patch_method_response.JPG
-
+// DELETE method response : https://github.com/priyanka25081999/go_practice/blob/main/output/delete%20method.JPG
