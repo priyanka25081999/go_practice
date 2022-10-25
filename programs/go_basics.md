@@ -146,3 +146,28 @@ Run function written in another file
         }
 
         To run this -> go run main.go state.go
+	
+
+**Slices and for loops**
+
+To handle the list of records, go uses 2 data structures : Arrays and Slices
+1. Arrays: Fix length of records
+2. Slices: An array that can grow or shrink
+
+Every element in an array or slice must be of same type
+
+	
+	
+	cards := []string{new_card(), "new_card", new_card()}
+
+	// add new element in a slice
+	cards = append(cards, "appended_card")
+	fmt.Println(cards)
+
+	// iterate over a slice
+	fmt.Println("Printing cards:-")
+	for i, card := range cards {
+		fmt.Println(i, card)
+	}
+
+
