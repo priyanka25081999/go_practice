@@ -154,7 +154,9 @@ To handle the list of records, go uses 2 data structures : Arrays and Slices
 1. Arrays: Fix length of records
 2. Slices: An array that can grow or shrink
 
-Every element in an array or slice must be of same type
+Every element in an array or slice must be of same type. 
+Whenever in go, we see []string or []byte etc then it is the slice of string or slice of byte etc.
+
 
 	
 	
@@ -170,4 +172,18 @@ Every element in an array or slice must be of same type
 		fmt.Println(i, card)
 	}
 
+**OO approach vs GO approach**
+
+1. Go is not an object oriented programming language, so there is no idea of having classes inside of go
+
+2. Using OO approach: we can create a "Deck class" which is a blurprint and can actually contains different methods and properties.
+    Then using Deck class we can create multiple instances of a class. 
+
+3. In Go language, we can create a new type from existing primitive data types. main.go->create and manipulate deck, deck.go->code which describes what deck is and how it works, deck_test..go-code to automatically test the deck
+
+**err in go:**
+
+1. It is a value of type "error"
+
+2. If everything goes well, then it will have a value of "nil" (nil means no value), else it will have an actual error message
 
