@@ -187,3 +187,50 @@ Whenever in go, we see []string or []byte etc then it is the slice of string or 
 
 2. If everything goes well, then it will have a value of "nil" (nil means no value), else it will have an actual error message
 
+**go structs:**
+
+1. It is a data structure in golang
+
+2. It is the collection of different properties that are related together
+
+3. definition is depends upon the order of fields defined in the struct. In future, if we change order of fields in the struct then it may create an ambiguity and we need to update the property definition as well.
+
+4. When we don't assign any value to any of the field of struct then go assigns zero value to it
+
+	a. string -> default value -> "" (empty string)
+
+	b. int -> default value -> 0
+
+	c. float -> default value -> 0
+
+	d. bool -> default value -> false
+
+5. Example:
+	
+		package main
+		import "fmt"
+
+		// structure declaration
+		type person struct {
+			firstName string
+			lastName  string
+		}
+
+		func main() {
+			// first way to pass the property to the struct
+			// person1 := person{"Piyu", "Salunke"}
+
+			// second way - pass the property_name:value
+			// Even though we change the order of properties in the struct, the program executes correctly.
+			// person1 := person{firstName: "Piyu", lastName: "Salunke"}
+			// fmt.Println(person1)
+
+			// third way
+			var person1 person
+			fmt.Println(person1)       // execute successfully, it shows {  } empty strings for struct fields
+			fmt.Printf("%+v", person1) // prints all values of struct, o/p as {firstName: lastName:} empty string values
+
+			person1.firstName = "Piyu"
+			person1.lastName = "Salunke"
+			fmt.Println("\n", person1)
+		}
