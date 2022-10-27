@@ -2,85 +2,49 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"math/rand"
 	"os"
-	"strings"
-	"time"
+	"testing"
 )
 
-// create a new type of 'deck'
-// which is a slice of string
-type deck []string
+func TestNewDeck(t *testing.T) {
 
-func newDeck() deck {
-	cards := deck{}
+	new_deck := newDeck()
 
-	cardSuite := []string{"Hearts", "Diamonds", "Shades", "Clubs"}
-	cardValues := []string{"Ace", "Two", "Three", "Four"}
-
-	for _, suite := range cardSuite {
-		for _, values := range cardValues {
-			cards = append(cards, suite+" of "+values)
-		}
+	// assuming we have 4 cardsuite and 4 cardvalues
+	fmt.Println(len(new_deck))
+	if len(new_deck) != 16 {
+		t.Errorf("Expected deck length 16, but received %v", len(new_deck))
 	}
 
-	return cards
-}
+	if new_deck[0] != "Hearts of Ace" {
+		t.Errorf("Expected first deck as Hearts of Ace, but got %v", new_deck[0])
+	}
 
-func (d deck) print() {
-	for i, card := range d {
-		fmt.Println(i, card)
+	if new_deck[len(new_deck)-1] != "Clubs of Four" {
+		t.Errorf("Expected last deck as Clubs of Four, but got %v", new_deck[len(new_deck)-1])
 	}
 }
 
-func deal(d deck, size int) (deck, deck) {
-	// return start-to-size and size-to-end (2 values)
-	return d[:size], d[size:]
-}
+// Next test - Delete any file in current working directory with the name "_decktesting"
+// create a deck, save to file "_decktesting", load/read from file, assert deck length
+// delete any files in current working directory with the name "_decktesting"
 
-// helper function
-// convert the deck into string type, it takes receiver and returns string
-func (d deck) deckToString() string {
+func TestSaveToDeckAndNewDeckFromFile(t *testing.T) {
+	// remove the existing file
+	os.Remove("_decktesting")
 
-	// ["hearts of ace", "clubes of ace"...] - slice of string
-	// ["hearts of ace, clubes of ace, ..."] - string type (single string)
-	// Join method takes the slice of strings and then we pass separator
-	// the join function will create a single string separated by comma
-	return strings.Join([]string(d), ", ")
-}
+	// create a new deck and save it
+	d := newDeck()
+	d.saveToFile("_decktesting")
 
-func (d deck) saveToFile(file_name string) error {
-	// 0666 -> read and write permission
-	return ioutil.WriteFile(file_name, []byte(d.deckToString()), 0666)
-}
+	// read the deck from local file
+	loadedDeck := newDeckFromFile("_decktesting")
 
-func newDeckFromFile(file_name string) deck {
-	bs, err := ioutil.ReadFile(file_name) // returns the []byte and error
-
-	// error occurs
-	if err != nil {
-		fmt.Println("Error : ", err)
-		// 1 - not success
-		os.Exit(1)
+	// assertions
+	if len(loadedDeck) != 16 {
+		t.Errorf("Expected 16 cards in deck, but got %v", len(loadedDeck))
 	}
 
-	// convert byte slice into the string and then convert it into string slice using split method
-	str := strings.Split(string(bs), ",")
-	// convert str (slice of strings) into deck
-	return deck(str)
-}
-
-func (d deck) shuffle() {
-	// here, we use current time as the value of seed to generate random number
-	source := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(source)
-
-	for index := range d {
-		// generate a random number
-		new_index := r.Intn(len(d) - 1)
-
-		// swap the current position with new position
-		d[index], d[new_index] = d[new_index], d[index]
-	}
+	// clean up the file
+	os.Remove("_decktesting")
 }
