@@ -273,3 +273,48 @@ Whenever in go, we see []string or []byte etc then it is the slice of string or 
 * Along with slice there are couple of other data structures as well which are behaving in the same fashion includes maps, pointers, functions, channels. These are all called as **reference types**. 
 
 * The int, float, string, bool, structs are called as **value types** (use pointers to change the actual values)
+
+**Maps in Golang:**
+1. A map is a collection of key-value pair like a dict in python
+2. In maps, both key and value are statically typed, they must be of same type.
+3. There are different ways to declare a map
+4. To access individual values in the map, we need to use square brackets syntax only. i.e colors["red"]. This is because all the keys of the map has types. here we have string. so key should be of string type only and we can define it using square brackets. but, in the struct we use . operator to access the values i.e person1.firstname. here we cannot specify the type i.e string, int etc. In the map, if we use int type then we can define it as colors[10]="xyz". we can easily change it from int to string and viz and also define it and differenciate it
+
+		package main
+
+		import "fmt"
+
+		func main() {
+			// Different ways to declare a map
+			// first way
+			// this is just an empty map, go will initialize it with the default values as we haven't yet initialized it
+			// var colors map[string]string
+			// fmt.Println(colors)
+
+			// second way - using built-in map function
+			// colors := make(map[string]string)
+			// colors["red"] = "145"
+			// fmt.Println(colors)
+
+			// third way
+			colors := map[string]string{
+				"red":   "#ff0000",
+				"green": "#fff000",
+				"white": "#ffffff",
+			}
+
+			// iterate over the map
+			// here, we are not coping the map, we are passing the reference here. Bcz map is a reference type data structure
+			printMap(colors)
+
+			// delete the key
+			// syntax : delete(map_name, key_name)
+			delete(colors, "green")
+			fmt.Println("After delete :", colors)
+		}
+
+		func printMap(m map[string]string) {
+			for color, hex := range m {
+				fmt.Println("Hex code for", color, "is", hex)
+			}
+		}
