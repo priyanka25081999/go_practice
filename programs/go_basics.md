@@ -234,3 +234,42 @@ Whenever in go, we see []string or []byte etc then it is the slice of string or 
 			person1.lastName = "Salunke"
 			fmt.Println("\n", person1)
 		}
+		
+**structs in golang:**
+
+1. It is a data structure in golang
+2. It is the collection of different properties that are related together
+3. definition is depends upon the order of fields defined in the struct. In future, if we change order of fields in the struct then it may create an ambiguity and we need to update the property definition as well.
+4. When we don't assign any value to any of the field of struct then go assigns zero value to it
+	a. string -> default value -> "" (empty string)
+	b. int -> default value -> 0
+	c. float -> default value -> 0
+	d. bool -> default value -> false
+5. Embed different structs, nested or child structs
+6. structs with receiver function:
+7. Pass by value: Go refers pass by value mechanism. Go copies data and then the copy is available to the another function
+8. Pointers in Go
+9. Gotchas with Pointers in Go: example:
+
+		func main() {
+			mySlice := []string {"Hi","there","how","are","you"}
+			mySlice.updateSlice(mySlice);
+			fmt.Println(mySlice)
+		}
+
+		func updateSlice(s []string) {
+			s[0] = "Bye"
+		}
+
+	If we run this code, then we can see the value s[0] is updated to Bye. This is a gotcha. Bcz, we have observed that go refers pass by value in structs and how it is changing the value in slice of string. (we are also not using any pointers here).
+
+10. Deep dive into slice:
+	Slice is a kind of an array, but it can grow and shrink. Slice interally uses 2 data structures. 1st is slice which has 3 parts: ptr to head, capacity and length. 
+	Ptr to head refers to the array which actually stores the elements of a slice, capaity refers to the elements that can contain at present and the length refers to the actual elements present in the slice.
+	So, in the memory the 3 parts of slice are stored in one mem location (e.g 0001) and the pt to head array which contains the actual slice elements are stored at another memory location (e.g 0002). 
+
+11. Now, come back to the above code, here Go still creates the copy of the slice (0001 mem location), but the crazy thing is that it is still pointing at the original array in the memory(0002). So we are updating the original array that both copies of slice data structure are now pointing to.
+
+* Along with slice there are couple of other data structures as well which are behaving in the same fashion includes maps, pointers, functions, channels. These are all called as **reference types**. 
+
+* The int, float, string, bool, structs are called as **value types** (use pointers to change the actual values)
