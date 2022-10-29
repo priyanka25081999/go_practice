@@ -355,3 +355,49 @@ Whenever in go, we see []string or []byte etc then it is the slice of string or 
 			return "Hola!"
 		}
 2. Interfaces are not generic types
+3. HTTP requests in Go
+
+		package main
+
+		import (
+			"fmt"
+			"io"
+			"net/http"
+			"os"
+		)
+
+		func main() {
+			resp, err := http.Get("http://google.com")
+
+			if err != nil {
+				fmt.Println("Error : ", err)
+				os.Exit(1)
+			}
+
+			// first way to print the response body
+			// bs := make([]byte, 99999)
+			// resp.Body.Read(bs)
+			// fmt.Println(string(bs))
+
+			// second way to print the response body
+			// Use of writer interface to directly write output on terminal
+			// first argument of io.copy should implements the writer interface
+			// and second argument should implements the reader interface
+			io.Copy(os.Stdout, resp.Body)
+
+			// call the custom interface
+			// lw := logWriter{}
+			// io.Copy(lw, resp.Body)
+		}
+
+		type logWriter struct{}
+
+		// custom implementation of writer interface i.e os.Stdout
+		func (logWriter) Write(bs []byte) (int, error) {
+			fmt.Println(string(bs))
+
+			// return the length of bytes which we've written on the terminal and nil as no error occured
+			fmt.Println("Just wrote this many bytes : ", len(bs))
+			return len(bs), nil
+		}
+
