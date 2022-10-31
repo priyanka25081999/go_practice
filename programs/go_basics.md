@@ -401,3 +401,188 @@ Whenever in go, we see []string or []byte etc then it is the slice of string or 
 			return len(bs), nil
 		}
 
+**Channels and Go routines:**
+1. Channels and go routines are both structures in go that are used for handling concurrent programming
+2. Sequential flow
+		package main
+
+		import (
+			"fmt"
+			"net/http"
+		)
+
+		func main() {
+			// Idea: write 5 websites URL in a slice of strings
+			// Make a http request while iterating over the list
+
+			links := []string{
+				"http://google.com",
+				"http://facebook.com",
+				"http://stackoverflow.com",
+				"http://golang.org",
+				"http://amazon.com",
+			}
+
+			// Here, program will run sequentially, also there will be some delay as
+			// it will wait for a response, log it and then move for the next link
+			// we are checking one request at a time
+			for _, link := range links {
+				checkLink(link)
+			}
+		}
+
+		func checkLink(url string) {
+			// first arg is resp structure and second is error
+			_, err := http.Get(url)		// blocking call
+
+			if err != nil {
+				fmt.Println(url, "might be down!")
+				return
+			}
+
+			fmt.Println(url, "is up!")
+		}
+3. To make the request parallel, we can use channels and go routines
+4. Go routines: When we compile and execute our go program, it will automatically create a one go routine. Go routine can be something which exists inside of our running program or our process. The go routine takes every line of code inside of our program and executes them one by one. So, during our program execution, go routines is freezed when we make a http get request, it is called as a blocking call. Now, to avoid this problem we can introduce another go routine.
+5. For this, we can add "go" keyword in our function call, this way go will create an another routine which will execute the function block. The http get request call is still a blocking call.  So, this new go routine then call main go routine again and main go routine then start next iteration of the loop. Then it will again create second new go routine to execute the function block. 
+6. Go Scheduler : Scheduler runs one routine until it finishes or makes a blocking call (like a HTTP request). 
+	a. Go routines always work with one CPU on the local machine
+	b. Even though we lauch multiple go routines, only one go routine is being executed or running at any given time
+	c. The main purpose of the go scheduler is to monitor the code that is running inside of each of these go routines. It decides which go routine is being executed.
+	d. As soon as this scheduler detects that one go routines has finished running all of the code inside it or if a scheduler detects that the function has made a blocking call. So, it will pause that current go routine and start execution of another go routine.
+	e. Now, when we have multiple cores in our CPU, sby default go tries to use only one CPU core. If we try to override that setting then each core can run one single go routine at a time. Then scheduler will assign the go routines to available cores.
+	f. check the go scheduler.png diagram for reference - https://github.com/priyanka25081999/go_practice/blob/main/programs/Go%20scheduler.png
+7. As soon as we introduce go keyword before checkLink() function, we don't see any output of the program when we execute it. At the beginning we have always one main go routine and as soon as we call the function, go will create multiple child go routines.  
+8. Main go routines controls when our program exits or quits. Now, once main go routines completes all iteration of the for loop (in case of our program) it assumes there is nothing to execute and it stops execution. The main routine doesn't care that all the child routines haven't yet finished fatching their HTTP url. Now, this is where channels comes into the picture.
+9. Go channels : Channels are used to communicate in between different running go routines. So we will create one channel which will communicate with different running go routines. We can think of channels as two way messaging device. We can send some data into a channel and that will automatically get sent to other running routine on our machine that has access to that channel. Channels are typed meaning that we should say what kind of data we are going to send. 
+10. With the below code logic, we only get response of one url and also get the channel msg of that same url. But we expect to get the resposne of all the URL's.
+		package main
+
+		import (
+			"fmt"
+			"net/http"
+		)
+
+		func main() {
+			// Idea: write 5 websites URL in a slice of strings
+			// Make a http request while iterating over the list
+
+			links := []string{
+				"http://google.com",
+				"http://facebook.com",
+				"http://stackoverflow.com",
+				"http://golang.org",
+				"http://amazon.com",
+			}
+
+			// channel creation
+			c := make(chan string)
+
+			// Here, program will run sequentially, also there will be some delay as
+			// it will wait for a response, log it and then move for the next link
+			// we are checking one request at a time
+			for _, link := range links {
+				//checkLink(link) -> sequential execution
+				go checkLink(link, c) // -> parallel execution, don't see any output (?)
+			}
+
+			// get the channel msg
+			fmt.Println(<-c)
+		}
+
+		// arg : c chan string -> type of c is chan (channel) and we are passing string type data
+		func checkLink(url string, c chan string) {
+			// first arg is resp structure and second is error
+			_, err := http.Get(url)
+
+			if err != nil {
+				fmt.Println(url, "might be down!")
+				// send msg to our channel
+				c <- "Might be down!"
+				return
+			}
+
+			fmt.Println(url, "is up!")
+			c <- "Yup, it's up!"
+		}
+11. Explaination. Here, At the beginning we have always one main go routine and as soon as we call the function, go will create multiple child go routines.  Now, once main go routines completes all iteration of the for loop (in case of our program) then main go routine will wait for the msg from child go routines and it will wait on fmt.Println(<-c) stmt in our program case. But, as the main go routine is waiting so it will be blocking call and scheduler will then pause the execution of main go routine. Now, comes to the child go routine. Here, as soon as any child go routine receives the HTTP response, the any of that child routine (who received the response) executes it's remainder section of the function block ie. weather the success or error. So, it will then add a msg to the channel. Now go scheduler checks that some msg is comming to the channel and it wakes up the make go routine and then main go routine take that msg, print it and say I am done as there is nothing more to execute and exits the program execution.
+The main thing is that the receiving msg from the channel is a blocking thing.
+12. Sample code block
+			package main
+
+			import (
+				"fmt"
+				"net/http"
+				"time"
+			)
+
+			func main() {
+				// Idea: write 5 websites URL in a slice of strings
+				// Make a http request while iterating over the list
+
+				links := []string{
+					"http://google.com",
+					"http://facebook.com",
+					"http://stackoverflow.com",
+					"http://golang.org",
+					"http://amazon.com",
+				}
+
+				// channel creation
+				c := make(chan string)
+
+				// Here, program will run sequentially, also there will be some delay as
+				// it will wait for a response, log it and then move for the next link
+				// we are checking one request at a time
+				for _, link := range links {
+					//checkLink(link) -> sequential execution
+					go checkLink(link, c) // -> parallel execution, don't see any output (?)
+				}
+
+				// get the channel msg
+				for i := 0; i < len(links); i++ {
+					// first iteration block the next all iterations of for loop
+					// it's like a sequential execution
+					fmt.Println(<-c)
+				}
+
+				// infinite for loop
+				// for l := range c {
+				// 	time.Sleep(5 * time.Second) // this will pause the go routine for 5seconds
+				// 	but due to this, main routine only receives/execute the msg after 5 sec due to sleep.
+				// 	We need to make sure that main routine always awake and aware about the coming messages, below for loop is the solution
+				// 	go checkLink(l, c)
+				// }
+
+				// inifinite, sleep and
+				for l := range c {
+					go func(link string) {
+						time.Sleep(5 * time.Second)
+						checkLink(link, c)
+					}(l)
+				}
+
+				// fmt.Println(<-c)
+				// fmt.Println(<-c)
+				// fmt.Println(<-c)
+				// fmt.Println(<-c)
+				// fmt.Println(<-c)
+				// fmt.Println(<-c) 6th call, our main routines just wait to get any msg to our channel and program won't stop
+			}
+
+			// arg : c chan string -> type of c is chan (channel) and we are passing string type data
+			func checkLink(url string, c chan string) {
+				// first arg is resp structure and second is error
+				_, err := http.Get(url)
+
+				if err != nil {
+					fmt.Println(url, "might be down!")
+					// send msg to our channel
+					c <- url
+					return
+				}
+
+				fmt.Println(url, "is up!")
+				c <- url
+			}
+
