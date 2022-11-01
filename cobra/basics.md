@@ -39,3 +39,39 @@ Example:
             os.Exit(1)
           }
         }
+
+3. **trace.go**
+        
+        // Cobra CLI - command with our own flags
+        package cmd
+
+        import (
+                "fmt"
+                "github.com/spf13/cobra"
+        )
+
+        // traceCmd represents the trace command
+        var traceCmd = &cobra.Command{
+                Use:   "trace",
+                Short: "trace the ip",
+                Long:  `trace the ip subcommand`,
+                Run: func(cmd *cobra.Command, args []string) {
+                        fmt.Println("trace subcommand called", args)
+                        f, _ := cmd.Flags().GetString("ip")
+                        fmt.Println("We have flags now, IP :", f)
+                },
+        }
+
+        func init() {
+                rootCmd.AddCommand(traceCmd)
+                rootCmd.PersistentFlags().String("ip", "", "Enter IP address")
+        }
+
+        /*
+        Output
+        ~/Documents/Golang programs/cobra$ go run main.go trace 1.1 --ip str
+        trace subcommand called [1.1]
+        We have flags now, IP : str
+        */
+
+
