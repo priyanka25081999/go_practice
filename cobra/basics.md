@@ -74,5 +74,23 @@ Example:
         trace subcommand called [1.1]
         We have flags now, IP : str
         */
+ 
+**Cobra file struture**
 
+        ▾ appName/
+            ▾ cmd/
+                add.go
+                your.go
+                commands.go
+                here.go
+              main.go
+     
+
+**Viper:** 
+
+Viper is a complete configuration solution for Go applications including 12-Factor apps. It is designed to work within an application, and can handle all types of configuration needs and formats. It supports: setting defaults. reading from JSON, TOML, YAML, HCL, envfile and Java properties config files.
+
+**Reference:**
+
+User guide: https://github.com/spf13/cobra/blob/main/user_guide.md
 
