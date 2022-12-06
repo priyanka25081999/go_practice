@@ -64,4 +64,8 @@ func main() {
 		fmt.Printf("\n%s", deploy.Name)
 	}
 
+	// let's see the incluster config
+	// For this, we also need to create a deployment. From local machine, we can not access the cluster.
+	// This is just for the reference
+	InClusterConfig()
 }
