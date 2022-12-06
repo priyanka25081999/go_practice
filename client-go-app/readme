@@ -1,0 +1,22 @@
+priyankasalunke:~/Documents/Golang programs/client-go-app$ docker build -t priyankass99/client-go-app .
+priyankasalunke:~/Documents/Golang programs/client-go-app$ kubectl create -f deployment-def.yaml 
+priyankasalunke:~/Documents/Golang programs/client-go-app$ kubectl logs <POD_NAME>
+*****Enter - InClusterConfig*****
+Pods from default namespace..
+
+busybox-cm-58c46f5564-rz459
+busybox-deployment1-7974dbcd96-nftnb
+busybox-pod
+busybox-secret-5976c4565-pps4x
+client-go-app-deployment-5c6d465487-pghdx
+k8s-deployment-6cbc575d99-cd9rp
+mysql-set-0
+nginx-deployment-b6cd6d559-hfcw2
+nginx-deployment-b6cd6d559-t6mdn
+nginx-ff6774dc6-mr9sg
+nginx-pod
+nginx-pod-ajay
+orders-webapp-deploy-68f89459b6-lrcrq
+proxy-app-575f4dcbb-5qzqc
+users-webapp-deploy-5dc9bc665d-kfwfr
+priyankasalunke:~/Documents/Golang programs/client-go-app$ 

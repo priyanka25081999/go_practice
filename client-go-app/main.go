@@ -66,6 +66,7 @@ func main() {
 
 	// let's see the incluster config
 	// For this, we also need to create a deployment. From local machine, we can not access the cluster.
+	// we require service host and service port to access the cluster
 	// This is just for the reference
 	InClusterConfig()
 }
