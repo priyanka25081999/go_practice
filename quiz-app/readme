@@ -1,0 +1,32 @@
+1. Example-1 : All provided answers are correct
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$ go run main.go
+Problem 1: 70+22 = 92
+Problem 2: 50+15 = 65
+Problem 3: 91+72 = 163
+Problem 4: 6+7 = 13
+Problem 5: 74+61 = 135
+Your result is 5 out of 5
+Press enter to exit
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$ 
+
+2. Example-2 : Some answers are correct and some are wrong
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$ go run main.go
+Problem 1: 70+22 = 92
+Problem 2: 50+15 = 66
+Problem 3: 91+72 = 162
+Problem 4: 6+7 = 13
+Problem 5: 74+61 = 132
+Your result is 2 out of 5
+Press enter to exit
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$
+
+3. Example-3 : Timer ran out of time and hence quiz exited
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$ go run main.go
+Problem 1: 70+22 = 92
+Problem 2: 50+15 = 65
+Problem 3: 91+72 = 153
+Problem 4: 6+7 = 
+Timer ends!
+Your result is 2 out of 5
+Press enter to exit
+priyankasalunke:~/Documents/Golang programs/go_practice/quiz-app$ 
