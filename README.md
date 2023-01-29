@@ -1,2 +1,2 @@
 # go_practice
-This repository contains Golang programs and other details
+This repository contains Golang projects and other fundamental concepts.
